@@ -1,0 +1,3 @@
+P = pointer address
+u = unsigned decimal pointer
+x unsigned hexadecimal  integer

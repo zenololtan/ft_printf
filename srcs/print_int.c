@@ -6,7 +6,7 @@
 /*   By: ztan <ztan@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/16 16:16:18 by ztan           #+#    #+#                */
-/*   Updated: 2020/01/28 15:39:34 by ztan          ########   odam.nl         */
+/*   Updated: 2020/02/14 17:33:16 by ztan          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,20 @@ int			num_len(int num)
 	return (len);
 }
 
-static void	print_int(int num, t_format *list)
+static void	print_int(int num, int precision, t_format *list)
 {
 	char *str;
 	char *temp;
 
-	str = ft_itoa(num);
+	if (num == -2147483648)
+	{
+		if (!precision)
+			str = ft_strdup("-2147483648");
+		else
+			str = ft_strdup("2147483648");
+	}
+    else
+        str = ft_itoa(num);
 	temp = str;
 	if (num < 0 && list->zero_flag && num_len(num) < list->width)
 		str++;
@@ -57,19 +65,19 @@ static void	print_width(int num, int width, int precision, t_format *list)
 		len = precision;
 	if (num < 0)
 		len++;
-	if (list->zero_flag && !precision)
+	if (list->zero_flag && (!precision || precision == -2))
 		padding = '0';
 	if (!precision && list->zero_flag && num < 0 && len <= width)
 		print_char('-', list);
 	if (!precision && list->minus_flag)
-		print_int(num, list);
+		print_int(num, precision, list);
 	while (width - len > 0)
 	{
 		print_char(padding, list);
 		width -= 1;
 	}
 	if (!precision && !list->minus_flag)
-		print_int(num, list);
+		print_int(num, precision, list);
 }
 
 static void	print_precision(int num, int precision, t_format *list)
@@ -94,7 +102,7 @@ static void	print_precision(int num, int precision, t_format *list)
 			precision -= 1;
 		}
 	}
-	print_int(num, list);
+	print_int(num, precision, list);
 }
 
 void		check_int(va_list arguments, t_format *list)
@@ -107,7 +115,7 @@ void		check_int(va_list arguments, t_format *list)
 	width = list->width;
 	num = va_arg(arguments, int);
 	if (!precision && !width)
-		print_int(num, list);
+		print_int(num, precision, list);
 	if (!list->minus_flag && width)
 		print_width(num, width, precision, list);
 	if (precision)

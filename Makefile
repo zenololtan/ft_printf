@@ -6,7 +6,7 @@
 #    By: ztan <ztan@student.codam.nl>                 +#+                      #
 #                                                    +#+                       #
 #    Created: 2019/11/09 14:26:49 by ztan           #+#    #+#                 #
-#    Updated: 2020/01/28 16:28:08 by ztan          ########   odam.nl          #
+#    Updated: 2020/02/04 15:51:12 by ztan          ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,16 +35,14 @@ FLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 
-$(NAME): obj_dir $(OBJ)
-	cd libft/ && $(MAKE)
+$(NAME): $(OBJ)
+	@make -C libft/
 	cp libft/libft.a ./$(NAME)
 	ar rcs $@ $(OBJ)
 
 $(OBJ_DIR)%.o: $(SRCS_DIR)%.c
+	mkdir -p obj
 	$(CC) -o $@ -c $(FLAGS) -I $(INC) $<
-
-obj_dir:
-	/bin/mkdir -p obj
 
 clean:
 	cd libft/ && $(MAKE) fclean

@@ -6,7 +6,7 @@
 /*   By: ztan <ztan@student.codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/14 13:31:56 by ztan           #+#    #+#                */
-/*   Updated: 2020/01/28 15:48:12 by ztan          ########   odam.nl         */
+/*   Updated: 2020/02/05 13:19:39 by ztan          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,25 +36,10 @@ static void	format_specifier(char format, t_format *list)
 
 static void	format_precision(char *format, va_list arguments, t_format *list)
 {
-	int			len;
-	char		*temp;
-
-	len = 0;
-	format++;
 	if (*format == '*')
-	{
-		len = va_arg(arguments, int);
-		list->precision = len;
-	}
+		list->precision = va_arg(arguments, int);
 	else
-	{
-		while (ft_isdigit(*format + len))
-			len++;
-		temp = malloc(sizeof(char) * len + 1);
-		ft_strlcpy(temp, format, len + 1);
-		list->precision = ft_atoi(temp);
-		free(temp);
-	}
+		list->precision = ft_atoi(format);
 	if (list->precision < 0)
 		list->precision = -2;
 	if (list->precision == 0)
@@ -63,29 +48,14 @@ static void	format_precision(char *format, va_list arguments, t_format *list)
 
 static void	format_width(char *format, va_list arguments, t_format *list)
 {
-	int			len;
-	char		*temp;
-
-	len = 0;
 	if (*format == '*')
-	{
-		len = va_arg(arguments, int);
-		list->width = len;
-	}
+		list->width = va_arg(arguments, int);
 	else
-	{
-		while (ft_isdigit(*format + len))
-			len++;
-		temp = malloc(sizeof(char) * len + 1);
-		ft_strlcpy(temp, format, len + 1);
-		list->width = ft_atoi(temp);
-		free(temp);
-	}
+		list->width = ft_atoi(format);
 	if (list->width < 0)
-	{
-		list->width = list->width * -1;
 		list->minus_flag = 1;
-	}
+	if (list->width < 0)
+		list->width = list->width * -1;
 }
 
 static void	format_flag(char format, t_format *list)
@@ -110,7 +80,7 @@ int			format_check(char *format, va_list arguments, t_format *list)
 							!list->width && !list->precision)
 			format_width(format + i, arguments, list);
 		if (format[i] == '.')
-			format_precision(format + i, arguments, list);
+			format_precision(format + 1 + i, arguments, list);
 		if (isspecifier(format[i]))
 			format_specifier(format[i], list);
 		i++;
